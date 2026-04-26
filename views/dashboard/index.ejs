@@ -1,0 +1,170 @@
+<%- include('../layouts/_header') %>
+<div class="d-flex">
+  <%- include('../layouts/_sidebar') %>
+  <div class="main-content flex-grow-1">
+    <div class="p-4">
+      <%- include('../layouts/_alert') %>
+      
+      <!-- Welcome Banner -->
+      <div class="p-4 mb-4 text-white rounded shadow-sm" style="background: linear-gradient(135deg, #0d6efd, #0dcaf0);">
+        <h2 class="fw-bold mb-1">Welcome back, <%= locals.user ? locals.user.name : 'User' %>!</h2>
+        <p class="mb-0 fs-5">VaultCore Product Data Management System</p>
+      </div>
+
+      <!-- Stats Row -->
+      <div class="row g-3 mb-4">
+        <div class="col-md-3 col-sm-6">
+          <div class="card stat-card shadow-sm h-100" style="border-left-color: #0d6efd;">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <h6 class="text-muted mb-1 text-uppercase fw-semibold" style="font-size: 0.8rem;">Total Products</h6>
+                  <h3 class="mb-0 fw-bold"><%= locals.totalProducts || 0 %></h3>
+                </div>
+                <div class="fs-1 text-primary opacity-50"><i class="bi bi-box-seam"></i></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-3 col-sm-6">
+          <div class="card stat-card shadow-sm h-100" style="border-left-color: #198754;">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <h6 class="text-muted mb-1 text-uppercase fw-semibold" style="font-size: 0.8rem;">Active Products</h6>
+                  <h3 class="mb-0 fw-bold"><%= locals.activeProducts || 0 %></h3>
+                </div>
+                <div class="fs-1 text-success opacity-50"><i class="bi bi-check-circle"></i></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-3 col-sm-6">
+          <div class="card stat-card shadow-sm h-100" style="border-left-color: #fd7e14;">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <h6 class="text-muted mb-1 text-uppercase fw-semibold" style="font-size: 0.8rem;">Total Components</h6>
+                  <h3 class="mb-0 fw-bold"><%= locals.totalComponents || 0 %></h3>
+                </div>
+                <div class="fs-1 text-warning opacity-50"><i class="bi bi-puzzle"></i></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-3 col-sm-6">
+          <div class="card stat-card shadow-sm h-100" style="border-left-color: #dc3545;">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <h6 class="text-muted mb-1 text-uppercase fw-semibold" style="font-size: 0.8rem;">In Review</h6>
+                  <h3 class="mb-0 fw-bold"><%= locals.inReviewCount || 0 %></h3>
+                </div>
+                <div class="fs-1 text-danger opacity-50"><i class="bi bi-clock-history"></i></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <% if (locals.user && locals.user.role === 'admin') { %>
+          <div class="col-md-3 col-sm-6">
+            <div class="card stat-card shadow-sm h-100" style="border-left-color: #6c757d;">
+              <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                  <div>
+                    <h6 class="text-muted mb-1 text-uppercase fw-semibold" style="font-size: 0.8rem;">Total Users</h6>
+                    <h3 class="mb-0 fw-bold"><%= locals.totalUsers || 0 %></h3>
+                  </div>
+                  <div class="fs-1 text-secondary opacity-50"><i class="bi bi-people"></i></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% } %>
+      </div>
+
+      <!-- Quick Actions and Recent Products -->
+      <div class="row g-4">
+        <!-- Recent Products -->
+        <div class="col-lg-8">
+          <div class="card shadow-sm border-0">
+            <div class="card-header bg-white border-bottom py-3">
+              <h5 class="card-title mb-0 fw-semibold">Recent Products</h5>
+            </div>
+            <div class="card-body p-0 table-responsive">
+              <table class="table table-hover mb-0 align-middle">
+                <thead class="table-light">
+                  <tr>
+                    <th class="px-4">Name</th>
+                    <th>Version</th>
+                    <th>Category</th>
+                    <th>Status</th>
+                    <th>Created By</th>
+                    <th class="text-end px-4">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% if (locals.recentProducts && locals.recentProducts.length > 0) { %>
+                    <% locals.recentProducts.forEach(product => { %>
+                      <tr>
+                        <td class="px-4 fw-medium"><%= product.name %></td>
+                        <td><span class="badge bg-light text-dark border"><%= product.version %></span></td>
+                        <td><%= product.category %></td>
+                        <td>
+                          <% 
+                            let statusClass = 'success';
+                            if (product.status === 'Discontinued') statusClass = 'danger';
+                            if (product.status === 'In Review') statusClass = 'warning text-dark';
+                          %>
+                          <span class="badge bg-<%= statusClass %>"><%= product.status %></span>
+                        </td>
+                        <td><%= product.createdBy ? product.createdBy.name : 'Unknown' %></td>
+                        <td class="text-end px-4">
+                          <a href="/products/<%= product._id %>" class="btn btn-sm btn-outline-primary">View</a>
+                        </td>
+                      </tr>
+                    <% }) %>
+                  <% } else { %>
+                    <tr>
+                      <td colspan="6" class="text-center py-4 text-muted">No products found.</td>
+                    </tr>
+                  <% } %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="col-lg-4">
+          <div class="card shadow-sm border-0">
+            <div class="card-header bg-white border-bottom py-3">
+              <h5 class="card-title mb-0 fw-semibold">Quick Actions</h5>
+            </div>
+            <div class="card-body d-flex flex-column gap-2">
+              <% if (locals.user && (locals.user.role === 'admin' || locals.user.role === 'manager')) { %>
+                <a href="/products/create" class="btn btn-primary d-flex justify-content-between align-items-center p-3">
+                  <span><i class="bi bi-plus-circle me-2"></i> Add New Product</span>
+                  <i class="bi bi-chevron-right"></i>
+                </a>
+              <% } %>
+              <a href="/products" class="btn btn-outline-secondary d-flex justify-content-between align-items-center p-3 text-start">
+                <span><i class="bi bi-box-seam me-2"></i> View All Products</span>
+                <i class="bi bi-chevron-right"></i>
+              </a>
+              <a href="/bom" class="btn btn-outline-secondary d-flex justify-content-between align-items-center p-3 text-start">
+                <span><i class="bi bi-file-earmark-pdf me-2"></i> Generate BOM Report</span>
+                <i class="bi bi-chevron-right"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+<%- include('../layouts/_footer') %>

@@ -1,0 +1,52 @@
+<div class="sidebar p-3 d-flex flex-column" id="sidebar">
+  <div class="top-section mb-3">
+    <div class="fs-4 fw-bold text-white mb-1" style="color: #0d6efd !important;">⬡ VaultCore</div>
+    <div class="text-muted small">PDM System</div>
+    <hr class="border-secondary mt-3 mb-3">
+  </div>
+  
+  <ul class="nav flex-column mb-auto">
+    <li class="nav-item">
+      <a href="/dashboard" class="nav-link d-flex align-items-center gap-2 <%= locals.currentPage_nav === 'dashboard' ? 'active' : '' %>">
+        <i class="bi bi-speedometer2"></i> Dashboard
+      </a>
+    </li>
+    <li class="nav-item">
+      <a href="/products" class="nav-link d-flex align-items-center gap-2 <%= locals.currentPage_nav === 'products' ? 'active' : '' %>">
+        <i class="bi bi-box-seam"></i> Products
+      </a>
+    </li>
+    <li class="nav-item">
+      <a href="/bom" class="nav-link d-flex align-items-center gap-2 <%= locals.currentPage_nav === 'bom' ? 'active' : '' %>">
+        <i class="bi bi-list-nested"></i> BOM Viewer
+      </a>
+    </li>
+    
+    <% if (locals.user && locals.user.role === 'admin') { %>
+      <li><hr class="border-secondary my-2"></li>
+      <li class="nav-item">
+        <a href="/admin/users" class="nav-link d-flex align-items-center gap-2 <%= locals.currentPage_nav === 'users' ? 'active' : '' %>">
+          <i class="bi bi-people"></i> Users
+        </a>
+      </li>
+    <% } %>
+  </ul>
+
+  <div class="bottom-section mt-auto pt-3 border-top border-secondary">
+    <div class="d-flex align-items-center text-white mb-3">
+      <% const initials = locals.user && locals.user.name ? locals.user.name.split(' ').map(n => n[0]).join('').substring(0,2).toUpperCase() : 'U'; %>
+      <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px; font-size: 0.8rem;">
+        <%= initials %>
+      </div>
+      <div class="lh-sm">
+        <div class="fw-bold" style="font-size: 0.9rem;"><%= locals.user ? locals.user.name : 'User' %></div>
+        <span class="badge badge-<%= locals.user ? locals.user.role : 'engineer' %> fw-normal" style="font-size: 0.7rem; text-transform: uppercase;">
+          <%= locals.user ? locals.user.role : 'engineer' %>
+        </span>
+      </div>
+    </div>
+    <a href="/logout" class="nav-link text-danger d-flex align-items-center gap-2 p-0 mt-2">
+      <i class="bi bi-box-arrow-left"></i> Logout
+    </a>
+  </div>
+</div>

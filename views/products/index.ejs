@@ -1,0 +1,167 @@
+<%- include('../layouts/_header') %>
+<div class="d-flex">
+  <%- include('../layouts/_sidebar') %>
+  <div class="main-content flex-grow-1">
+    <div class="p-4">
+      <%- include('../layouts/_alert') %>
+      
+      <!-- Top bar -->
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0 fw-bold">
+          Products 
+          <span class="badge bg-secondary ms-2 fs-6"><%= locals.totalDocs || 0 %></span>
+        </h2>
+        <% if (locals.user && (locals.user.role === 'manager' || locals.user.role === 'admin')) { %>
+          <a href="/products/new" class="btn btn-primary">
+            <i class="bi bi-plus-circle me-1"></i> Add Product
+          </a>
+        <% } %>
+      </div>
+
+      <!-- Filter bar -->
+      <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body bg-light">
+          <form action="/products" method="GET" class="row g-3 align-items-end">
+            <div class="col-md-4">
+              <label for="search" class="form-label text-muted small fw-bold">Search by Name</label>
+              <input type="text" class="form-control" id="search" name="search" placeholder="Enter product name..." value="<%= locals.search || '' %>">
+            </div>
+            <div class="col-md-3">
+              <label for="category" class="form-label text-muted small fw-bold">Category</label>
+              <select class="form-select" id="category" name="category">
+                <option value="">All Categories</option>
+                <% const categories = ['Mechanical', 'Electrical', 'Software', 'Assembly', 'Document', 'Other']; %>
+                <% categories.forEach(cat => { %>
+                  <option value="<%= cat %>" <%= locals.category === cat ? 'selected' : '' %>><%= cat %></option>
+                <% }) %>
+              </select>
+            </div>
+            <div class="col-md-2">
+              <label for="status" class="form-label text-muted small fw-bold">Status</label>
+              <select class="form-select" id="status" name="status">
+                <option value="">All Statuses</option>
+                <% const statuses = ['Active', 'In Review', 'Discontinued']; %>
+                <% statuses.forEach(stat => { %>
+                  <option value="<%= stat %>" <%= locals.status === stat ? 'selected' : '' %>><%= stat %></option>
+                <% }) %>
+              </select>
+            </div>
+            <div class="col-md-3">
+              <button type="submit" class="btn btn-secondary w-100 mb-1">
+                <i class="bi bi-search me-1"></i> Search
+              </button>
+              <a href="/products" class="btn btn-link text-decoration-none w-100 text-muted">Clear Filters</a>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Products Table -->
+      <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body p-0 table-responsive">
+          <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+              <tr>
+                <th class="px-4">#</th>
+                <th>Name</th>
+                <th>Version</th>
+                <th>Category</th>
+                <th>Status</th>
+                <th>Components</th>
+                <th>Created By</th>
+                <th>Date</th>
+                <th class="text-end px-4">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if (locals.products && locals.products.length > 0) { %>
+                <% locals.products.forEach((product, index) => { %>
+                  <tr>
+                    <td class="px-4 text-muted"><%= ((locals.currentPage - 1) * 10) + index + 1 %></td>
+                    <td class="fw-medium text-dark"><%= product.name %></td>
+                    <td><span class="badge bg-light text-dark border"><%= product.version %></span></td>
+                    <td><%= product.category %></td>
+                    <td>
+                      <% 
+                        let statusClass = 'success';
+                        if (product.status === 'Discontinued') statusClass = 'danger';
+                        if (product.status === 'In Review') statusClass = 'warning text-dark';
+                      %>
+                      <span class="badge bg-<%= statusClass %>"><%= product.status %></span>
+                    </td>
+                    <td>
+                      <span class="badge bg-secondary rounded-pill"><%= product.components.length %></span>
+                    </td>
+                    <td><%= product.createdBy ? product.createdBy.name : 'Unknown' %></td>
+                    <td class="text-muted small"><%= product.createdAt.toLocaleDateString() %></td>
+                    <td class="text-end px-4">
+                      <div class="btn-group">
+                        <a href="/products/<%= product._id %>" class="btn btn-sm btn-outline-primary" title="View Details">
+                          <i class="bi bi-eye"></i>
+                        </a>
+                        <% if (locals.user && (locals.user.role === 'manager' || locals.user.role === 'admin')) { %>
+                          <a href="/products/<%= product._id %>/edit" class="btn btn-sm btn-outline-secondary" title="Edit Product">
+                            <i class="bi bi-pencil"></i>
+                          </a>
+                        <% } %>
+                        <% if (locals.user && locals.user.role === 'admin') { %>
+                          <form action="/products/<%= product._id %>?_method=DELETE" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this product AND all its components? This action cannot be undone.');">
+                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete Product" style="border-top-left-radius: 0; border-bottom-left-radius: 0;">
+                              <i class="bi bi-trash"></i>
+                            </button>
+                          </form>
+                        <% } %>
+                      </div>
+                    </td>
+                  </tr>
+                <% }) %>
+              <% } else { %>
+                <tr>
+                  <td colspan="9" class="text-center py-5">
+                    <div class="text-muted mb-3">
+                      <i class="bi bi-inbox fs-1"></i>
+                      <p class="mt-2 mb-0">No products found matching your criteria.</p>
+                    </div>
+                    <% if (locals.user && (locals.user.role === 'manager' || locals.user.role === 'admin')) { %>
+                      <a href="/products/new" class="btn btn-primary btn-sm">Add New Product</a>
+                    <% } %>
+                  </td>
+                </tr>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Pagination -->
+      <% if (locals.totalPages > 1) { %>
+        <% 
+          const qParams = new URLSearchParams();
+          if (locals.search) qParams.set('search', locals.search);
+          if (locals.category) qParams.set('category', locals.category);
+          if (locals.status) qParams.set('status', locals.status);
+          const baseQuery = qParams.toString() ? '&' + qParams.toString() : '';
+        %>
+        <nav aria-label="Product pagination">
+          <ul class="pagination justify-content-center">
+            <li class="page-item <%= locals.currentPage === 1 ? 'disabled' : '' %>">
+              <a class="page-link" href="?page=<%= locals.currentPage - 1 %><%= baseQuery %>" tabindex="-1">Previous</a>
+            </li>
+            
+            <% for(let i = 1; i <= locals.totalPages; i++) { %>
+              <li class="page-item <%= locals.currentPage === i ? 'active' : '' %>">
+                <a class="page-link" href="?page=<%= i %><%= baseQuery %>"><%= i %></a>
+              </li>
+            <% } %>
+
+            <li class="page-item <%= locals.currentPage === locals.totalPages ? 'disabled' : '' %>">
+              <a class="page-link" href="?page=<%= locals.currentPage + 1 %><%= baseQuery %>">Next</a>
+            </li>
+          </ul>
+        </nav>
+      <% } %>
+
+    </div>
+  </div>
+</div>
+<%- include('../layouts/_footer') %>

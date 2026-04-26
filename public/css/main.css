@@ -1,0 +1,75 @@
+/* Layout */
+.sidebar { 
+  width: 250px; 
+  min-height: 100vh; 
+  background: #1a1a2e;
+  position: fixed; 
+  top: 0; 
+  left: 0; 
+  z-index: 1040;
+}
+
+.main-content { 
+  margin-left: 250px; 
+  min-height: 100vh; 
+  background: #f8f9fa; 
+  display: flex;
+  flex-direction: column;
+}
+
+/* Sidebar nav */
+.sidebar .nav-link { 
+  color: #a0aec0; 
+  padding: 10px 20px;
+  border-radius: 6px; 
+  margin: 2px 8px; 
+}
+.sidebar .nav-link:hover,
+.sidebar .nav-link.active { 
+  background: rgba(255,255,255,0.1); 
+  color: #fff; 
+}
+
+/* Stat cards */
+.stat-card { 
+  border: none; 
+  border-radius: 10px; 
+  border-left: 4px solid; 
+}
+
+/* Role badges */
+.badge-admin { background: #dc3545; }
+.badge-manager { background: #fd7e14; }
+.badge-engineer { background: #0d6efd; }
+
+/* Table headers */
+.table th { 
+  background: #f1f3f5; 
+  font-weight: 600; 
+  font-size: 0.85rem;
+  text-transform: uppercase; 
+  letter-spacing: 0.05em; 
+}
+
+@media (min-width: 768px) {
+  .top-navbar {
+    margin-left: 250px;
+  }
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .sidebar { 
+    transform: translateX(-250px); 
+    transition: transform 0.2s ease-in-out; 
+  }
+  .sidebar.open { 
+    transform: translateX(0); 
+  }
+  .main-content { 
+    margin-left: 0; 
+  }
+  .top-navbar {
+    margin-left: 0;
+  }
+}

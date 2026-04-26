@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= locals.pageTitle ? locals.pageTitle + ' - ' : '' %>VaultCore PDM</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+
+<header class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm py-3 px-4 top-navbar" style="z-index: 1030;">
+  <div class="container-fluid p-0">
+    <!-- Left: Mobile toggle & Page Title -->
+    <div class="d-flex align-items-center">
+      <button class="btn btn-light d-md-none me-2" type="button" id="mobileMenuBtn">
+        <i class="bi bi-list fs-4"></i>
+      </button>
+      <h4 class="mb-0 fw-semibold text-dark"><%= locals.pageTitle || 'Dashboard' %></h4>
+    </div>
+
+    <!-- Right: Date, User info, Logout -->
+    <div class="d-flex align-items-center gap-4">
+      <div class="text-muted d-none d-md-block fs-6">
+        <i class="bi bi-calendar3 me-1"></i> <%= new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' }) %>
+      </div>
+      <div class="d-flex align-items-center">
+        <div class="text-end me-3 d-none d-sm-block lh-sm">
+          <div class="fw-bold text-dark"><%= locals.user ? locals.user.name : 'User' %></div>
+          <span class="badge bg-<%= locals.user && locals.user.role === 'admin' ? 'danger' : (locals.user && locals.user.role === 'manager' ? 'warning text-dark' : 'primary') %>">
+            <%= locals.user ? locals.user.role.toUpperCase() : 'ENGINEER' %>
+          </span>
+        </div>
+        <a href="/logout" class="btn btn-outline-danger btn-sm d-flex align-items-center gap-1">
+          <i class="bi bi-box-arrow-right"></i> <span class="d-none d-sm-inline">Logout</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</header>

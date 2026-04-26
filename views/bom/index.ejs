@@ -1,0 +1,77 @@
+<%- include('../layouts/_header') %>
+<div class="d-flex">
+  <%- include('../layouts/_sidebar') %>
+  <div class="main-content flex-grow-1">
+    <div class="p-4">
+      <%- include('../layouts/_alert') %>
+      
+      <!-- Page header -->
+      <div class="mb-4">
+        <h2 class="mb-1 fw-bold">BOM Viewer</h2>
+        <p class="text-muted fs-5">Select a product to view its Bill of Materials</p>
+      </div>
+
+      <!-- Summary stats bar -->
+      <div class="card shadow-sm border-0 bg-light mb-4">
+        <div class="card-body d-flex justify-content-around align-items-center py-3">
+          <div class="text-center">
+            <h6 class="text-muted text-uppercase small fw-bold mb-1">Products Shown</h6>
+            <h3 class="mb-0 fw-bold text-primary"><%= locals.totalProducts || 0 %></h3>
+          </div>
+          <div class="border-end border-secondary opacity-25" style="height: 40px;"></div>
+          <div class="text-center">
+            <h6 class="text-muted text-uppercase small fw-bold mb-1">Total Components Across All</h6>
+            <h3 class="mb-0 fw-bold text-success"><%= locals.totalComponents || 0 %></h3>
+          </div>
+        </div>
+      </div>
+
+      <!-- Products grid -->
+      <div class="row g-4">
+        <% if (locals.products && locals.products.length > 0) { %>
+          <% locals.products.forEach(product => { %>
+            <div class="col-md-6 col-lg-4">
+              <div class="card shadow-sm border-0 h-100">
+                <div class="card-header bg-white border-bottom py-3 d-flex justify-content-between align-items-center">
+                  <h5 class="mb-0 fw-bold text-truncate" title="<%= product.name %>"><%= product.name %></h5>
+                  <span class="badge bg-light text-dark border">v<%= product.version %></span>
+                </div>
+                <div class="card-body">
+                  <div class="d-flex justify-content-between align-items-center mb-3">
+                    <span class="text-muted small fw-medium text-uppercase"><%= product.category %></span>
+                    <% 
+                      let statusClass = 'success';
+                      if (product.status === 'Discontinued') statusClass = 'danger';
+                      if (product.status === 'In Review') statusClass = 'warning text-dark';
+                    %>
+                    <span class="badge bg-<%= statusClass %>"><%= product.status %></span>
+                  </div>
+                  <div class="d-flex align-items-center">
+                    <i class="bi bi-puzzle text-secondary me-2 fs-5"></i>
+                    <span class="fw-medium fs-5"><%= product.components.length %></span> 
+                    <span class="text-muted ms-1 small">Components</span>
+                  </div>
+                </div>
+                <div class="card-footer bg-light py-3 border-top d-flex justify-content-between gap-2">
+                  <a href="/bom/<%= product._id %>" class="btn btn-primary w-100 text-nowrap">
+                    <i class="bi bi-list-nested me-1"></i> View BOM
+                  </a>
+                  <a href="/pdf/bom/<%= product._id %>" class="btn btn-outline-secondary w-100 text-nowrap">
+                    <i class="bi bi-file-earmark-pdf me-1"></i> PDF
+                  </a>
+                </div>
+              </div>
+            </div>
+          <% }) %>
+        <% } else { %>
+          <div class="col-12 text-center py-5 text-muted">
+            <i class="bi bi-inbox fs-1"></i>
+            <p class="mt-2 mb-0">No active products found.</p>
+          </div>
+        <% } %>
+      </div>
+
+    </div>
+  </div>
+</div>
+<%- include('../layouts/_footer') %>
